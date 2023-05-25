@@ -1,63 +1,57 @@
 import pickle
 import numpy as np
 from scipy.signal import welch
-import matplotlib.pyplot as plt
+import json
 
-filename = 'filtered_modmadata'
-fs = 250
+with open('currentDB.json', 'r') as f:
+    dbname = json.load(f)['dbname']
 
-# Abrindo o arquivo pickle
-with open(f'./datafiles/{filename}.pkl', 'rb') as f:
+with open(f'./datafiles/{dbname}/info.json', 'r') as f:
+    info = json.load(f)
+
+with open(f'./datafiles/{dbname}/cleanedData.pkl', 'rb') as f:
     pkdata = pickle.load(f)
 
-# Abrindo o arquivo pickle
-with open(f'./datafiles/label_modmadata.pkl', 'rb') as f:
-    labeldata = pickle.load(f)
+fs = info['fs']
+bands = info['bands']
+window_time = info['window_time']//1000
 
-def labeling_data(data, data_label):
-    names_matrix = []
+data = []
+for i in range(0,pkdata.shape[2],window_time*fs):
+    data.append(pkdata[:,:,i:i+window_time*fs])
 
-    for lab in data_label:
-        name_matrix = np.zeros((1, 1, data.shape[2]))
-        name_matrix[:] = lab
-        names_matrix.append(name_matrix)
+data = np.vstack(data)
 
-    names_matrix = np.vstack(names_matrix)
-
-    return np.hstack((data, names_matrix))
-
-totaldata = labeling_data(pkdata,labeldata)
-print(f'pkdata.shape: {pkdata.shape}')
-print(f'labeldata.shape: {labeldata.shape}')
-print(f'totaldata.shape: {totaldata.shape}')
-# Cutting every 1 s
-time_cut = 1  # seconds
-
-inicialdata = []
-for i in range(0,totaldata.shape[2],time_cut*fs):
-    inicialdata.append(totaldata[:,:,i:i+time_cut*fs])
-
-inicialdata = np.vstack(inicialdata)
-print(f'incialaldata.shape: {inicialdata.shape}')
-
-f, Pxx = welch(x=inicialdata[:,:-1,:],
+f, Pxx = welch(x=data[:,:-1,:],
                fs=float(fs),
                window='hamming',
                nperseg=100,
+               noverlap=0,
                axis=2)
 
+feature_vector = []
+for band in bands:
+    M = np.zeros((Pxx.shape[2]))
+    if band == 'delta':
+        M[f <= 5] = 1
+    elif band == 'theta':
+        M[5 < f] = 1
+        M[f <= 8] = 0
+    elif band == 'alpha':
+        M[8 < f] = 1
+        M[f <= 12] = 0
+    elif band == 'beta':
+        M[12 < f] = 1
+        M[f <= 30] = 0
+    elif band == 'gamma':
+        M[30 < f] = 1
+        M[f <= 45] = 0
 
-# Diminuindo o vetor de features
-n = 21
-Pxx = Pxx[:,:,:n]
-f = f[0:n]
+    feature_vector.append(np.sum((M*Pxx),axis=2)/np.count_nonzero(M))
 
-labels = inicialdata[:,-1,:].reshape((inicialdata[:,-1,:].shape[0],1,inicialdata[:,-1,:].shape[1]))[:,:,:n]
+# feature_vector = np.hstack(feature_vector)
+feature_vector = np.dstack(feature_vector)
+featured_data = feature_vector.transpose((0,2,1))
 
-plt.plot(f,Pxx[13,0,:])
-plt.show()
-
-featured_data = np.hstack((Pxx,labels))
-
-with open(f'./datafiles/featured_data.pkl', 'wb') as file:
-    pickle.dump(featured_data, file)
+with open(f'./datafiles/{dbname}/featuredData.pkl', 'wb') as file:
+    pickle.dump(feature_vector, file)

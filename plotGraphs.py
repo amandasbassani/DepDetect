@@ -1,29 +1,40 @@
 import pickle
 import numpy as np
 import matplotlib.pyplot as plt
+import json
 
-file1 = 'modmadata'
-file2 = 'filtered_modmadata'
+subject = 0
+ch_name = 'Fp2'
+filename1 = 'filteredData'
+filename2 = 'cleanedData'
 
-subject = 40
-channel = 0
+with open('currentDB.json', 'r') as f:
+    dbname = json.load(f)['dbname']
 
-n = 75000  # numero de amostras
-fs = 250
+with open(f'./datafiles/{dbname}/info.json', 'r') as f:
+    info = json.load(f)
 
-# Abrindo o arquivo pickle
-with open(f'./datafiles/{file1}.pkl', 'rb') as f:
+with open(f'./datafiles/{dbname}/{filename1}.pkl', 'rb') as f:
     data1 = pickle.load(f)
 
-# Abrindo o arquivo pickle
-with open(f'./datafiles/{file2}.pkl', 'rb') as f:
+with open(f'./datafiles/{dbname}/{filename2}.pkl', 'rb') as f:
     data2 = pickle.load(f)
 
-t = np.linspace(0, n/fs, n, False)  # 5 minutes (300 sec)
-fig, (ax1, ax2) = plt.subplots(2, 1, sharex='all')
-ax1.plot(t, data1[subject,channel,:])
-ax1.set_title('Original data')
-ax2.plot(t, data2[subject,channel,:])
-ax2.set_title('Filtered data')
+selected_channels = info['selected_channels']
+ch_names = info['ch_names']
+ch_types = info['ch_types']
+tRec = info['tRec']
+fs = info['fs']
+
+n = fs*tRec
+n_channels = len(ch_names)
+t = np.linspace(0, n / fs, n, False)
+
+fig, (ax1, ax2) = plt.subplots(2, 1, sharex='all', sharey='all')
+fig.suptitle(f'Subject {subject} Channel {ch_name}')
+ax1.plot(t, data1[subject,ch_names.index(ch_name),:])
+ax1.set_title(filename1)
+ax2.plot(t, data2[subject,ch_names.index(ch_name),:])
+ax2.set_title(filename2)
 ax2.set_xlabel('Time [seconds]')
 plt.show()

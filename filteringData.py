@@ -1,39 +1,41 @@
 import pickle
 import numpy as np
 from scipy.signal import butter, iirnotch, filtfilt, sosfilt
+import json
 
-filename = 'modmadata'  # nome do arquivo pickle de formato (subject x samples x channels x movements)
-n = 75000  # numero de amostras
-fs = 250  # taxa de amostragem
-f0 = 50  # frequencia da rede (na China é 50 Hz)
+with open('currentDB.json', 'r') as f:
+    dbname = json.load(f)['dbname']
 
-def filtering(data, f0, fs):
-    print(data.shape)
-    time_padding = 10  # seconds
-    n_padding = fs*time_padding
-    padding = data[:,:,:n_padding]
-    filtered_data = np.dstack((padding,data))
-    print(filtered_data.shape)
-    for subject in range(data.shape[0]):
-        for channel in range(data.shape[1]):
-            b, a = iirnotch(f0, 5, fs=fs)
-            filtered_data[subject, channel, :] = filtfilt(b, a, filtered_data[subject, channel, :])
-            sos = butter(5, [0.5, 50], 'bp', fs=fs, output='sos')
-            filtered_data[subject, channel, :] = sosfilt(sos, filtered_data[subject, channel, :])
-    filtered_data = filtered_data[:,:,n_padding:]
-    print(filtered_data.shape)
-    return filtered_data
+with open(f'./datafiles/{dbname}/info.json', 'r') as f:
+    info = json.load(f)
 
+selected_channels = info['selected_channels']
+ch_names = info['ch_names']
+tRec = info['tRec']
+fs = info['fs']
+f0 = info['f0']
+fa = info['fa']
+fb = info['fb']
 
-# Abrindo o arquivo pickle
-with open(f'./datafiles/{filename}.pkl', 'rb') as f:
-    data_array = pickle.load(f)
+n = fs*tRec
+n_channels = len(ch_names)
 
-# Recuperando vetores de dados: o primeiro com shape (subjects x channels x n_samples)
-data_array = data_array[:, :, 0:n]
+with open(f'./datafiles/{dbname}/pickledData.pkl', 'rb') as f:
+    data = pickle.load(f)
 
 # Filtrando sinal, mantendo o  mesmo shape dos dados (subjects x channels x n_samples)
-data_filtered = filtering(data_array, f0, fs)
+time_padding = 10  # seconds
+n_padding = fs*time_padding
+padding = data[:,:,:n_padding]
+filtered_data = np.dstack((padding,data))
 
-with open(f'./datafiles/filtered_{filename}.pkl', 'wb') as f:
-    pickle.dump(data_filtered, f)
+for subject in range(data.shape[0]):
+    for channel in range(data.shape[1]):
+        b, a = iirnotch(f0, 10, fs=fs)
+        filtered_data[subject, channel, :] = filtfilt(b, a, filtered_data[subject, channel, :])
+        sos = butter(4, [fa, fb], 'bp', fs=fs, output='sos')
+        filtered_data[subject, channel, :] = sosfilt(sos, filtered_data[subject, channel, :])
+filtered_data = filtered_data[:,:,n_padding:]
+
+with open(f'./datafiles/{dbname}/filteredData.pkl', 'wb') as f:
+    pickle.dump(filtered_data, f)
