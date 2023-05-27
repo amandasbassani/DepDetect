@@ -1,6 +1,6 @@
-Link to datafolder: https://drive.google.com/drive/folders/1AsDZbTzGzYI74DHcfHV5nnn2-DtmJlDy?usp=share_link
+[MODMA Datafolder](https://drive.google.com/drive/folders/1AsDZbTzGzYI74DHcfHV5nnn2-DtmJlDy?usp=share_link)
 
-Link to pickle files: https://drive.google.com/drive/folders/1U7wcYFw-u7VVdnxQLLyhAXJi3fFYazDk?usp=share_link
+[Pickle Files](https://drive.google.com/drive/folders/1U7wcYFw-u7VVdnxQLLyhAXJi3fFYazDk?usp=share_link)
 
 [DepDetect Dataflow](https://www.figma.com/file/EcJ9jFfj6ejyPxTtE2kcuH/eegDep?type=whiteboard&t=COwI8jHtaG9aVf41-1)
 
