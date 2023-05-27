@@ -1,6 +1,6 @@
 import pickle
 import mne
-from mne.preprocessing import corrmap
+from mne.preprocessing import corrmap, ICA
 import matplotlib.pyplot as plt
 import numpy as np
 import json
@@ -18,30 +18,43 @@ with open(f'./datafiles/{dbname}/componentsICA.pkl', 'rb') as f:
     icas = pickle.load(f)
 
 fs = info['fs']
-ch_ref_eog = info['ch_ref_eog']
-sub_ref_eog = info['sub_ref_eog']
+ch_refs = info['ch_refs']
+sub_refs = info['sub_refs']
+artifacts_labels = info['artifacts_labels']
 
-# use the 27th subject as template; use E22 as proxy for EOG
-eog_inds, _ = icas[sub_ref_eog].find_bads_eog(raws[sub_ref_eog], ch_name=ch_ref_eog)
-template_eog_component1 = icas[sub_ref_eog].get_components()[:, eog_inds[0]]
+def cleanbycorr(raws,icas,subs,chs,labels):
 
-corrmap(icas, template=template_eog_component1, threshold=0.8, label="eye_mov", plot=False)
+    for sub, ch, label in zip(subs,chs,labels):
+        inds, _ = icas[sub].find_bads_eog(raws[sub], ch_name=ch)
+        template = icas[sub].get_components()[:, inds[0]]
+        corrmap(icas, template=template, threshold='auto', label=label, plot=False)
+
+    reconst_raws = []
+    for raw,ica in zip(raws,icas):
+        flag = True
+        for label in labels:
+            if ica.labels_[label] != []:
+                # ica.plot_components(picks=ica.labels_[label])
+                ica.exclude = ica.labels_[label]
+                # ica.plot_sources(raw, show_scrollbars=False)
+                flag = False
+        if flag:
+            reconst_raws.append(raw)
+            continue
+
+        reconst_raw = raw.copy()  # ica.apply() changes the Raw object in-place, so let's make a copy first
+        ica.apply(reconst_raw)
+
+        reconst_raws.append(reconst_raw)
+
+    return reconst_raws
+
+
+reconst_raws = cleanbycorr(raws, icas, sub_refs, ch_refs, artifacts_labels)
 
 data = []
-for raw,ica in zip(raws,icas):
-    if ica.labels_["eye_mov"] != []:
-        # ica.plot_components(picks=ica.labels_["eye_mov"])
-        ica.exclude = ica.labels_["eye_mov"]
-        # ica.plot_sources(raw, show_scrollbars=False)
-    else:
-        data.append(raw.get_data())
-        continue
-
-    reconst_raw = raw.copy()  # ica.apply() changes the Raw object in-place, so let's make a copy first
-    ica.apply(reconst_raw)
-
-    data.append(reconst_raw.get_data())
-
+for raw in reconst_raws:
+    data.append(raw.get_data())
 cleaned_data = np.dstack(data).transpose([2,0,1])
 
 with open(f'./datafiles/{dbname}/cleanedData.pkl', 'wb') as f:

@@ -2,10 +2,14 @@ from keras.models import Sequential
 from keras.layers import Conv1D, MaxPooling1D, GRU, Dense, Dropout
 import pickle
 import numpy as np
+import tensorflow as tf
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
 import json
+from keras.optimizers import SGD
+opt = SGD(learning_rate=0.01)
 
-np.random.seed(0)
+tf.keras.utils.set_random_seed(0)
 
 with open('currentDB.json', 'r') as f:
     dbname = json.load(f)['dbname']
@@ -23,30 +27,51 @@ fs = info['fs']
 bands = info['bands']
 window_time = info['window_time']//1000
 tRec = info['tRec']
-[trn, val, tst] = info['trProp']
+trn, val, tst = info['trProp']
+trName = info['trName']
 
 labels = labeldata * tRec
 X = data
-y = np.array(labels)
+y = np.array(labels)[:,np.newaxis,np.newaxis]
+print(y.shape)
+print(X.shape)
 
-model = Sequential()
+def zscore(x1, x2):
+    u = np.mean(x1,axis=0)
+    n = x1.shape[0]
+    std = np.sqrt(np.sum((x1-u)**2,axis=0)/(n-1))
+    return (x1-u)/std, (x2-u)/std
 
-model.add(Conv1D(filters=128, kernel_size=5, activation='relu', input_shape=(X.shape[1],X.shape[2])))
-model.add(MaxPooling1D(pool_size=2))
-model.add(Conv1D(filters=256, kernel_size=5, activation='relu', input_shape=(X.shape[1],X.shape[2])))
-model.add(GRU(units=256))
-model.add(Dropout(0.2))
-model.add(Dense(units=1, activation='softmax'))
+input_shape = (X.shape[1], X.shape[2])
 
-# Compila o modelo
+model = tf.keras.Sequential()
+model.add(tf.keras.layers.Conv1D(filters=128, kernel_size=5, activation='relu', input_shape=input_shape))
+model.add(tf.keras.layers.MaxPooling1D(pool_size=2))
+model.add(tf.keras.layers.Conv1D(filters=256, kernel_size=5, activation='relu'))
+model.add(tf.keras.layers.MaxPooling1D(pool_size=2))
+model.add(tf.keras.layers.GRU(units=256))
+model.add(tf.keras.layers.Dropout(0.2))
+model.add(tf.keras.layers.Dense(units=1, activation='sigmoid'))
+
 model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
 
-# Divide os dados em treino e teste
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=tst, random_state=42)
 
-# Treina o modelo
-history = model.fit(X_train, y_train, epochs=100, batch_size=256, validation_split=val/(val+trn))
+X_train, X_test = zscore(X_train, X_test)
 
-# Avalia o modelo
-loss, accuracy = history.evaluate(X_test, y_test)
-print(f'Loss: {loss}, Accuracy: {accuracy}')
+# X_train = X[:14310,:,:]
+# X_test = X[14310:,:,:]
+# y_train = y[:14310,:,:]
+# y_test = y[14310:,:,:]
+
+model.fit(X_train, y_train, epochs=100, batch_size=256, validation_split=0.1)
+
+with open(f'./datafiles/{dbname}/models/test{trName}.pkl', 'wb') as f:
+    pickle.dump([X_test, y_test], f)
+
+model.save(f'./datafiles/{dbname}/models/model{trName}.h5')
+
+# Evaluate the model
+# loss, accuracy = model.evaluate(X_test, y_test)
+# print("Test Loss:", loss)
+# print("Test Accuracy:", accuracy)

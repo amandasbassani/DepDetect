@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import json
 
-filename = 'filteredData'
+filename = 'cleanedData'
 
 with open('currentDB.json', 'r') as f:
     dbname = json.load(f)['dbname']

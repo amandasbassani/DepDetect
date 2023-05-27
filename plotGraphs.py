@@ -3,8 +3,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import json
 
-subject = 0
-ch_name = 'Fp2'
+subject = 49
+ch_name = 'T4'
 filename1 = 'filteredData'
 filename2 = 'cleanedData'
 
