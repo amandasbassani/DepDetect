@@ -4,7 +4,7 @@ import numpy as np
 import json
 import os
 
-filename = 'filteredData'
+filename = 'cleanedData'
 
 with open('currentDB.json', 'r') as f:
     dbname = json.load(f)['dbname']
