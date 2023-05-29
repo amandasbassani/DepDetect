@@ -19,5 +19,9 @@ y_test = test[1]
 
 model = tf.keras.models.load_model(f'./datafiles/{dbname}/models/model{trName}.h5')
 
-acc = np.mean(y_test == model.predict(X_test))
-print("Test Accuracy:", acc)
+# make a prediction
+# ynew = model.predict_classes(Xnew)
+predict_x=model.predict(X_test)
+y_pred = np.zeros(predict_x.shape)
+y_pred[predict_x>=0.5] = 1
+print("Test Accuracy:", np.mean(y_pred==y_test.astype(float)))
