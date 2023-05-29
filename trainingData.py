@@ -48,6 +48,8 @@ def zscore(x1, x2):
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=tst, random_state=42)
 X_train, X_test = zscore(X_train, X_test)
 
+print(X_train.shape)
+print(X_test.shape)
 
 model = tf.keras.Sequential()
 model.add(tf.keras.layers.Conv1D(filters=128, kernel_size=5, activation='relu', input_shape=(X.shape[1], X.shape[2])))
@@ -59,7 +61,7 @@ model.add(tf.keras.layers.Dropout(0.2))
 model.add(tf.keras.layers.Dense(units=1, activation='softmax'))
 
 optimizer = tf.keras.optimizers.RMSprop(learning_rate=0.005)
-model.compile(optimizer=optimizer, loss='binary_crossentropy', metrics=['accuracy'])
+model.compile(optimizer=optimizer, loss='binary_crossentropy', metrics=['Accuracy', 'Recall', 'Precision'])
 
 model.fit(X_train, y_train, epochs=100, batch_size=256, validation_split=0.1)
 
