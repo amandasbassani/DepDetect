@@ -21,13 +21,17 @@ fs = info['fs']
 ch_refs = info['ch_refs']
 sub_refs = info['sub_refs']
 artifacts_labels = info['artifacts_labels']
+thresholds = info['thresholds']
 
-def cleanbycorr(raws,icas,subs,chs,labels):
+def cleanbycorr(raws,icas,subs,chs,labels,thresholds):
 
-    for sub, ch, label in zip(subs,chs,labels):
-        inds, _ = icas[sub].find_bads_eog(raws[sub], ch_name=ch)
-        template = icas[sub].get_components()[:, inds[0]]
-        corrmap(icas, template=template, threshold='auto', label=label, plot=False)
+    for sub, ch, label, threshold in zip(subs,chs,labels,thresholds):
+        if ch == "F8" and label == "h_mov1":
+            template = icas[sub].get_components()[:, 0]
+        else:
+            inds, _ = icas[sub].find_bads_eog(raws[sub], ch_name=ch)
+            template = icas[sub].get_components()[:, inds[0]]
+        corrmap(icas, template=template, threshold=threshold, label=label, plot=False)
 
     reconst_raws = []
     for raw,ica in zip(raws,icas):
@@ -49,8 +53,31 @@ def cleanbycorr(raws,icas,subs,chs,labels):
 
     return reconst_raws
 
+def cleanbyproxy(raws, icas):
+    reconst_raws = []
+    for raw,ica in zip(raws,icas):
+        bad_indices1, _ = ica.find_bads_eog(raw, ch_name='Fp2')
+        bad_indices1 = set(bad_indices1)
+        bad_indices2, _ = ica.find_bads_eog(raw, ch_name='F8')
+        bad_indices2 = set(bad_indices2)
+        bad_indices3, _ = ica.find_bads_eog(raw, ch_name='T4')
+        bad_indices3 = set(bad_indices3)
+        bad_indices4, _ = ica.find_bads_eog(raw, ch_name='O1')
+        bad_indices4 = set(bad_indices3)
+        eog_indices = list(bad_indices1.union(bad_indices2).union(bad_indices3).union(bad_indices4))
 
-reconst_raws = cleanbycorr(raws, icas, sub_refs, ch_refs, artifacts_labels)
+        if eog_indices != []:
+            ica.exclude = eog_indices
+        else:
+            reconst_raws.append(raw)
+            continue
+        reconst_raw = raw.copy()
+        ica.apply(reconst_raw)
+        reconst_raws.append(reconst_raw)
+    return reconst_raws
+
+# reconst_raws = cleanbycorr(raws, icas, sub_refs, ch_refs, artifacts_labels, thresholds)
+reconst_raws = cleanbyproxy(raws, icas)
 
 data = []
 for raw in reconst_raws:
