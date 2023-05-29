@@ -19,8 +19,6 @@ y_test = test[1]
 
 model = tf.keras.models.load_model(f'./datafiles/{dbname}/models/model{trName}.h5')
 
-# make a prediction
-# ynew = model.predict_classes(Xnew)
 predict_x=model.predict(X_test)
 y_pred = np.zeros(predict_x.shape)
 y_pred[predict_x>=0.5] = 1
