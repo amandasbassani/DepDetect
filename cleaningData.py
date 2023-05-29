@@ -31,7 +31,7 @@ def cleanbycorr(raws,icas,subs,chs,labels,thresholds):
         else:
             inds, _ = icas[sub].find_bads_eog(raws[sub], ch_name=ch)
             template = icas[sub].get_components()[:, inds[0]]
-        corrmap(icas, template=template, threshold=threshold, label=label, plot=False)
+        corrmap(icas, template=template, threshold=threshold, label=label, plot=True)
 
     reconst_raws = []
     for raw,ica in zip(raws,icas):
@@ -76,8 +76,8 @@ def cleanbyproxy(raws, icas):
         reconst_raws.append(reconst_raw)
     return reconst_raws
 
-# reconst_raws = cleanbycorr(raws, icas, sub_refs, ch_refs, artifacts_labels, thresholds)
-reconst_raws = cleanbyproxy(raws, icas)
+reconst_raws = cleanbycorr(raws, icas, sub_refs, ch_refs, artifacts_labels, thresholds)
+# reconst_raws = cleanbyproxy(raws, icas)
 
 data = []
 for raw in reconst_raws:

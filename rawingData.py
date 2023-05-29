@@ -2,12 +2,14 @@ import pickle
 import mne
 from mne.preprocessing import ICA
 import json
+import os
 
 with open('currentDB.json', 'r') as f:
     dbname = json.load(f)['dbname']
 
 with open(f'./datafiles/{dbname}/info.json', 'r') as f:
     info = json.load(f)
+
 
 selected_channels = info['selected_channels']
 ch_names = info['ch_names']

@@ -2,8 +2,9 @@ import pickle
 import matplotlib.pyplot as plt
 import numpy as np
 import json
+import os
 
-filename = 'cleanedData'
+filename = 'filteredData'
 
 with open('currentDB.json', 'r') as f:
     dbname = json.load(f)['dbname']
@@ -13,6 +14,11 @@ with open(f'./datafiles/{dbname}/info.json', 'r') as f:
 
 with open(f'./datafiles/{dbname}/{filename}.pkl', 'rb') as f:
     data_array = pickle.load(f)
+
+pathimages = f'./datafiles/{dbname}/images/'
+
+if not os.path.exists(pathimages):
+    os.makedirs(pathimages)
 
 selected_channels = info['selected_channels']
 ch_names = info['ch_names']
