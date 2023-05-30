@@ -26,11 +26,8 @@ thresholds = info['thresholds']
 def cleanbycorr(raws,icas,subs,chs,labels,thresholds):
 
     for sub, ch, label, threshold in zip(subs,chs,labels,thresholds):
-        if ch == "F8" and label == "h_mov1":
-            template = icas[sub].get_components()[:, 0]
-        else:
-            inds, _ = icas[sub].find_bads_eog(raws[sub], ch_name=ch)
-            template = icas[sub].get_components()[:, inds[0]]
+        inds, _ = icas[sub].find_bads_eog(raws[sub], ch_name=ch)
+        template = icas[sub].get_components()[:, inds[0]]
         corrmap(icas, template=template, threshold=threshold, label=label, plot=True)
 
     reconst_raws = []
@@ -63,7 +60,7 @@ def cleanbyproxy(raws, icas):
         bad_indices3, _ = ica.find_bads_eog(raw, ch_name='T4')
         bad_indices3 = set(bad_indices3)
         bad_indices4, _ = ica.find_bads_eog(raw, ch_name='O1')
-        bad_indices4 = set(bad_indices3)
+        bad_indices4 = set(bad_indices4)
         eog_indices = list(bad_indices1.union(bad_indices2).union(bad_indices3).union(bad_indices4))
 
         if eog_indices != []:
@@ -76,8 +73,12 @@ def cleanbyproxy(raws, icas):
         reconst_raws.append(reconst_raw)
     return reconst_raws
 
-reconst_raws = cleanbycorr(raws, icas, sub_refs, ch_refs, artifacts_labels, thresholds)
-# reconst_raws = cleanbyproxy(raws, icas)
+
+reconst_raws = None
+if dbname == 'mumtaz':
+    reconst_raws = cleanbycorr(raws, icas, sub_refs, ch_refs, artifacts_labels, thresholds)
+elif dbname == 'modma':
+    reconst_raws = cleanbyproxy(raws, icas)
 
 data = []
 for raw in reconst_raws:

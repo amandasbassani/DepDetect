@@ -59,6 +59,7 @@ model.add(tf.keras.layers.Conv1D(filters=256, kernel_size=5, activation='relu'))
 model.add(tf.keras.layers.MaxPooling1D(pool_size=2))
 model.add(tf.keras.layers.GRU(units=256))
 model.add(tf.keras.layers.Dropout(0.2))
+
 if classification == "sigmoid":
     model.add(tf.keras.layers.Dense(units=1, activation='sigmoid'))
 elif classification == "softmax":
