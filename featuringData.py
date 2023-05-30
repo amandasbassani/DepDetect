@@ -26,7 +26,7 @@ f, Pxx = welch(x=data,
                fs=float(fs),
                window='hamming',
                nperseg=100,
-               noverlap=0,
+               # noverlap=0,
                axis=2)
 
 # feature_vector = []
@@ -49,13 +49,13 @@ f, Pxx = welch(x=data,
 #
 #     feature_vector.append(np.sum((M*Pxx),axis=2)/np.count_nonzero(M))
 #
-# feature_vector = np.hstack(feature_vector)
 # feature_vector = np.dstack(feature_vector)
 # featured_data = feature_vector.transpose((0,2,1))
 # print(featured_data.shape)
 
-featured_data = Pxx.transpose((0,2,1))
+featured_data = Pxx.transpose((0,2,1))# [:,0:21,:]
 print(featured_data.shape)
+print(f[0:21])
 
 with open(f'./datafiles/{dbname}/featuredData.pkl', 'wb') as file:
     pickle.dump(featured_data, file)
