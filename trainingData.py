@@ -30,6 +30,7 @@ window_time = info['window_time']//1000
 tRec = info['tRec']
 trn, val, tst = info['trProp']
 trName = info['trName']
+classification = info['classification']
 
 
 def zscore_normalize_channels(X):
@@ -44,6 +45,9 @@ def zscore_normalize_channels(X):
 labels = labeldata * (tRec//window_time)
 y = np.array(labels)
 
+if classification == "softmax":
+    y = np.hstack((np.logical_not(y)[:,np.newaxis],y[:,np.newaxis]))
+
 X = zscore_normalize_channels(data)
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=tst, random_state=42)
@@ -55,7 +59,10 @@ model.add(tf.keras.layers.Conv1D(filters=256, kernel_size=5, activation='relu'))
 model.add(tf.keras.layers.MaxPooling1D(pool_size=2))
 model.add(tf.keras.layers.GRU(units=256))
 model.add(tf.keras.layers.Dropout(0.2))
-model.add(tf.keras.layers.Dense(units=1, activation='sigmoid'))
+if classification == "sigmoid":
+    model.add(tf.keras.layers.Dense(units=1, activation='sigmoid'))
+elif classification == "softmax":
+    model.add(tf.keras.layers.Dense(units=2, activation='softmax'))
 
 optimizer = tf.keras.optimizers.RMSprop(learning_rate=0.005)
 model.compile(optimizer=optimizer, loss='binary_crossentropy', metrics=['Accuracy', 'Recall', 'Precision'])
