@@ -2,7 +2,6 @@ import pickle
 import mne
 from mne.preprocessing import ICA
 import json
-import os
 
 with open('currentDB.json', 'r') as f:
     dbname = json.load(f)['dbname']
@@ -10,17 +9,15 @@ with open('currentDB.json', 'r') as f:
 with open(f'./datafiles/{dbname}/info.json', 'r') as f:
     info = json.load(f)
 
-
 selected_channels = info['selected_channels']
 ch_names = info['ch_names']
 tRec = info['tRec']
 fs = info['fs']
-ch_types = info['ch_types']
 
 n_channels = len(ch_names)
 
 layout = mne.channels.make_standard_montage('standard_1020')
-info = mne.create_info(ch_names=ch_names, ch_types=ch_types, sfreq=fs)
+info = mne.create_info(ch_names=ch_names, ch_types='eeg', sfreq=fs)
 
 with open(f'./datafiles/{dbname}/filteredData.pkl', 'rb') as f:
     data_array = pickle.load(f)

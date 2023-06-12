@@ -1,4 +1,4 @@
 
-datafiles/filtered_modmadata.pkl
-datafiles/modmadata.pkl
-*.pkl
+datafiles/mumtaz/*.pkl
+datafiles/modma/*.pkl
+

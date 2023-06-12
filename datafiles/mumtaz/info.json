@@ -1,24 +1,20 @@
 {"dbname": "mumtaz",
  "dbpath": "D:/amand/Documentos/Datasets/mumtaz",
 
- "selected_channels": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18],
- "ch_names": ["Fp1", "F3", "C3", "P3", "O1", "F7", "T3", "T5", "Fz", "Fp2", "F4", "C4", "P4", "O2", "F8",
-  "T4", "T6", "Cz", "Pz"],
- "ch_types": "eeg",
+ "selected_channels": [
+  "EEG Fp1-LE", "EEG F3-LE", "EEG C3-LE", "EEG P3-LE", "EEG O1-LE", "EEG F7-LE", "EEG T3-LE",
+  "EEG T5-LE", "EEG Fp2-LE", "EEG F4-LE", "EEG C4-LE", "EEG P4-LE", "EEG O2-LE", "EEG F8-LE", "EEG T4-LE", "EEG T6-LE",
+  "EEG Cz-LE"
+ ],
+ "ch_names": ["Fp1", "F3", "C3", "P3", "O1", "F7", "T3", "T5", "Fp2", "F4", "C4", "P4", "O2", "F8", "T4", "T6"],
 
  "fs": 256, "f0": 50, "fa": 0.5, "fb": 50,
 
- "ch_refs": ["Fp1"],
- "sub_refs": [7],
- "artifacts_labels": ["eyes_mov"],
- "thresholds": ["auto"],
-
  "tRec": 300,
- "bands": ["delta","theta","alpha","beta","gamma"],
  "window_time": 1000,
 
  "trProp": [0.81, 0.09, 0.1],
- "trName": "overlaphamming3005",
+ "trName": "16channelsgoodacc",
  "classification": "softmax"
 
 }
