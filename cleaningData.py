@@ -15,14 +15,9 @@ with open(f'./datafiles/{dbname}/componentsICA.pkl', 'rb') as f:
     icas = pickle.load(f)
 
 fs = info['fs']
-ch_refs = info['ch_refs']
-sub_refs = info['sub_refs']
-artifacts_labels = info['artifacts_labels']
-thresholds = info['thresholds']
-
+i = 0
 reconst_raws = []
-for raw,ica in zip(raws,icas):
-
+for raw, ica in zip(raws, icas):
     bad_indices1, _ = ica.find_bads_eog(raw, ch_name='Fp2')
     bad_indices1 = set(bad_indices1)
     bad_indices2, _ = ica.find_bads_eog(raw, ch_name='F8')
@@ -34,6 +29,7 @@ for raw,ica in zip(raws,icas):
     eog_indices = list(bad_indices1.union(bad_indices2).union(bad_indices3).union(bad_indices4))
 
     if eog_indices:
+        ica.plot_sources(raw, picks=eog_indices, show_scrollbars=False)
         ica.plot_components(picks=eog_indices)
         ica.exclude = eog_indices
     else:

@@ -17,7 +17,6 @@ fs = info['fs']
 tRec = info['tRec']
 
 n = fs*tRec
-n_channels = len(ch_names)
 
 data_list = []
 label_list = []

@@ -22,7 +22,6 @@ if not os.path.exists(pathimages):
 
 selected_channels = info['selected_channels']
 ch_names = info['ch_names']
-ch_types = info['ch_types']
 tRec = info['tRec']
 fs = info['fs']
 
