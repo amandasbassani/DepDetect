@@ -15,9 +15,6 @@ ch_names = info['ch_names']
 fs = info['fs']
 tRec = info['tRec']
 
-n = fs*tRec
-n_channels = int(len(selected_channels))
-
 data_list = []
 label_list = []
 i = 0
@@ -29,10 +26,10 @@ for filename in os.listdir(dbpath):
         raw_data = data.get_data()
         print(data.info)
 
-        if raw_data.shape[1] < n:
+        if raw_data.shape[1] < fs*tRec:
             continue
 
-        selected_data = raw_data[:, :n]
+        selected_data = raw_data[:, :fs*tRec]
         data_list.append(selected_data)
 
         # Verifica se o paciente é saudável (0) ou diagnosticado com depressão (1)
@@ -46,8 +43,6 @@ for subject in range(data_array.shape[0]):
     Cz_ref = data_array[subject, -1, :]
     data_array[subject,:-1,:] = data_array[subject,:-1,:] - Cz_ref
 data_array = data_array[:,:-1,:]
-print(data_array.shape)
-
 
 with open(f'./datafiles/{dbname}/pickledData.pkl', 'wb') as f:
     pickle.dump(data_array, f)

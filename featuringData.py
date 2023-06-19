@@ -13,7 +13,7 @@ with open(f'./datafiles/{dbname}/cleanedData.pkl', 'rb') as f:
     pkdata = pickle.load(f)
 
 fs = info['fs']
-window_time = info['window_time']//1000
+window_time = info['window_time']
 
 data = []
 for i in range(0,pkdata.shape[2],window_time*fs):
@@ -28,8 +28,6 @@ f, Pxx = welch(x=data,
                axis=2)
 
 featured_data = Pxx.transpose((0,2,1))
-print(featured_data.shape)
-print(f[0:21])
 
 with open(f'./datafiles/{dbname}/featuredData.pkl', 'wb') as file:
     pickle.dump(featured_data, file)
