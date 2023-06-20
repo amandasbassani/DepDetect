@@ -10,7 +10,6 @@
  "window_time": 1,
 
  "trProp": [0.81, 0.09, 0.1],
- "trName": "16channels1106",
- "classification": "softmax"
+ "trName": "16channels1106"
 
 }
