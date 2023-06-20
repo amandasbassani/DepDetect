@@ -9,7 +9,7 @@ with open('currentDB.json', 'r') as f:
 with open(f'./datafiles/{dbname}/info.json', 'r') as f:
     info = json.load(f)
 
-trName = info['trName']
+trName = 'model_otim1'
 classification = info['classification']
 
 with open(f'./datafiles/{dbname}/models/test{trName}.pkl', 'rb') as f:
