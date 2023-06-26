@@ -9,7 +9,7 @@ with open('currentDB.json', 'r') as f:
 with open(f'./datafiles/{dbname}/info.json', 'r') as f:
     info = json.load(f)
 
-trName = 'model_otim1'
+trName = 'chosen2'
 
 with open(f'./datafiles/{dbname}/models/test{trName}.pkl', 'rb') as f:
     test = pickle.load(f)
@@ -20,8 +20,6 @@ y_test = test[1]
 model = tf.keras.models.load_model(f'./datafiles/{dbname}/models/model{trName}.h5')
 
 predict_x=model.predict(X_test)
-
-
 
 y_pred = np.around(predict_x)
 

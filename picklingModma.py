@@ -39,7 +39,7 @@ for filename in os.listdir(dbpath):
                     label_list.append(0)
 
 data_array = np.array(data_list)
-
+print(data_array)
 with open(f'./datafiles/{dbname}/pickledData.pkl', 'wb') as f:
     pickle.dump(data_array, f)
 

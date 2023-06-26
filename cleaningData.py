@@ -1,6 +1,7 @@
 import pickle
 import numpy as np
 import json
+import matplotlib.pyplot as plt
 
 with open('currentDB.json', 'r') as f:
     dbname = json.load(f)['dbname']
@@ -30,7 +31,7 @@ for raw, ica in zip(raws, icas):
 
     if eog_indices:
         ica.plot_sources(raw, picks=eog_indices, show_scrollbars=False)
-        ica.plot_components(picks=eog_indices)
+        ica.plot_components(picks=eog_indices, colorbar=True)
         ica.exclude = eog_indices
     else:
         reconst_raws.append(raw)

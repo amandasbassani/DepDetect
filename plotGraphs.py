@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import json
 
-subject = 49
+subject = 23
 ch_name = 'T4'
 filename1 = 'pickledData'
 filename2 = 'filteredData'
@@ -49,7 +49,7 @@ ax1.plot(t, data1[subject,ch_names.index(ch_name),:], linewidth=1)
 ax1.set_title(title1)
 ax2.plot(t, data2[subject,ch_names.index(ch_name),:], linewidth=1)
 ax2.set_title(title2)
-ax2.set_xlabel('Time [s]')
+ax2.set_xlabel('Tempo [s]')
 plt.show()
 
 dados_frequencia1 = np.fft.fft(data1[subject,ch_names.index(ch_name),:])
