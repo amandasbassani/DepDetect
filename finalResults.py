@@ -5,12 +5,15 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix, precision_recall_fscore_support
 
-model_name = 'chosen_mumtaz'
-dbname = 'mumtaz'
+model_name = 'last_modma2'
+dbname = 'modma'
 
 with open(f'./datafiles/{dbname}/models/test{model_name}.pkl', 'rb') as f:
+# with open(f'./datafiles/mumtaz/models/test{model_name}.pkl', 'rb') as f:
     test = pickle.load(f)
 model = tf.keras.models.load_model(f'./datafiles/{dbname}/models/model{model_name}.h5')
+# model = tf.keras.models.load_model(f'./datafiles/mumtaz/models/model{model_name}.h5')
+
 
 
 X_test = test[0]
