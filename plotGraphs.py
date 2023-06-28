@@ -3,10 +3,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 import json
 
-subject = 1
-ch_name = 'T3'
-filename1 = 'pickledData'
-filename2 = 'filteredData'
+subject = 28
+ch_name = 'Fp1'
+filename1 = 'filteredData'
+filename2 = 'cleanedData'
 
 with open('currentDB.json', 'r') as f:
     dbname = json.load(f)['dbname']
@@ -51,7 +51,7 @@ else:
     content1 = data1[subject, ch_names.index(ch_name), :]
     content2 = data2[subject, ch_names.index(ch_name), :]
 
-fig, (ax1, ax2) = plt.subplots(2, 1, sharex='all')
+fig, (ax1, ax2) = plt.subplots(2, 1, sharex='all', sharey='all')
 fig.suptitle(f'Canal {ch_name} do Indivíduo {subject + 1}')
 ax1.plot(t, content1, linewidth=1)
 ax1.set_title(title1)
