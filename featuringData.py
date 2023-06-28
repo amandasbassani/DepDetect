@@ -20,7 +20,7 @@ data = []
 for i in range(0,pkdata.shape[2],window_time*fs):
     data.append(pkdata[:,:,i:i+window_time*fs])
 
-data = np.vstack(data)
+data = np.vstack(data) * 1e6
 
 f, Pxx = welch(x=data,
                fs=float(fs),
@@ -39,11 +39,12 @@ Pxx = featured_data[13000,:,2]
 # filtered_Pxx = np.convolve(Pxx, np.ones(window_size) / window_size, mode='same')
 
 plt.semilogy(f, Pxx)
+# plt.plot(f, Pxx)
 plt.title(f'Canal C3 do Indivíduo 44')
 plt.xlim([0, 50])
-plt.ylim([10e-18, 10e-12])
+# plt.ylim([10e-18, 10e-12])
 plt.xlabel('Frequência [Hz]')
-plt.ylabel('PSD [V²/Hz]')
+plt.ylabel('PSD [$\mu$V²/Hz]')
 plt.show()
 
 with open(f'./datafiles/{dbname}/featuredData.pkl', 'wb') as file:

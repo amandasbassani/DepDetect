@@ -5,8 +5,8 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix, precision_recall_fscore_support
 
-model_name = 'teste1dcnn'
-dbname = 'mumtaz'
+model_name = 'last_modma2'
+dbname = 'modma'
 
 with open(f'./datafiles/{dbname}/models/test{model_name}.pkl', 'rb') as f:
 # with open(f'./datafiles/mumtaz/models/test{model_name}.pkl', 'rb') as f:
@@ -31,7 +31,7 @@ print("Test Loss:", model.evaluate(X_test, y_test))
 y_pred = y_pred[:,1].astype(int)
 y_test = y_test[:,1].astype(int)
 
-print(precision_recall_fscore_support(y_test,y_pred))
+print(precision_recall_fscore_support(y_test,y_pred, average='binary'))
 
 cm = confusion_matrix(y_test, y_pred)
 
@@ -46,4 +46,4 @@ plt.xlabel('Classe Prevista')
 plt.ylabel('Classe Verdadeira')
 
 # Exibir o gráfico
-# plt.show()
+plt.show()
