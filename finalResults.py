@@ -5,8 +5,8 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix, precision_recall_fscore_support
 
-model_name = 'last_modma2'
-dbname = 'modma'
+model_name = 'usingdownsample'
+dbname = 'mumtaz'
 
 with open(f'./datafiles/{dbname}/models/test{model_name}.pkl', 'rb') as f:
 # with open(f'./datafiles/mumtaz/models/test{model_name}.pkl', 'rb') as f:
@@ -16,7 +16,6 @@ model = tf.keras.models.load_model(f'./datafiles/{dbname}/models/model{model_nam
 
 X_test = test[0]
 y_test = test[1]
-
 
 predict_x=model.predict(X_test)
 

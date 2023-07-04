@@ -9,7 +9,7 @@ with open('currentDB.json', 'r') as f:
 with open(f'./datafiles/{dbname}/info.json', 'r') as f:
     info = json.load(f)
 
-trName = 'chosen2'
+trName = 'tryjustuntil50'
 
 with open(f'./datafiles/{dbname}/models/test{trName}.pkl', 'rb') as f:
     test = pickle.load(f)
